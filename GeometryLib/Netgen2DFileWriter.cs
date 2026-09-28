@@ -1,5 +1,6 @@
 ﻿using GeometryLib;
 
+// This was written with AI-assistance
 public class Netgen2DFileWriter : GeometryWriter
 {
     public Netgen2DFileWriter(Geometry geometry) : base(geometry)

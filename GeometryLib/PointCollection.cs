@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace GeometryLib
 {
+    // Portions of this were developed with AI
     public class PointCollection : IReadOnlyList<GeomPoint>
     {
         private readonly List<GeomPoint> _points = new();

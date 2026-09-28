@@ -188,6 +188,7 @@ namespace GeometryLib
         /// Create a rectangle surface and apply independent fillets at each corner.
         /// (r0, z0) is lower-left.
         /// Returns surface tag.
+        /// Vibe-coded
         /// </summary>
         public GeomSurface AddRectWithCornerRadii(
             double r0, double z0, double w, double h,

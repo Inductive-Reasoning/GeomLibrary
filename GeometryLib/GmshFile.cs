@@ -33,6 +33,7 @@ namespace GeometryLib
         /// field is the sole *requested-size* driver. Set to false to keep
         /// mixing them (the effective size at each location becomes the min of
         /// all sources).
+        /// AI-assisted
         /// </summary>
         public bool DisableOtherSizeSourcesWhenFieldActive { get; set; } = false;
 
@@ -45,6 +46,7 @@ namespace GeometryLib
         /// because gmsh inserts intermediate-sized cells instead of trying to
         /// satisfy the field jump in one element. Set to false only if you
         /// really want the field to be the sole size source.
+        /// AI-assisted
         /// </summary>
         public bool ExtendSizeFromBoundary { get; set; } = true;
 
@@ -57,6 +59,7 @@ namespace GeometryLib
         /// (e.g. conductor corner radii) even when a background mesh-size field is active; the
         /// effective size at any point then becomes <c>min(field, curvatureSize)</c>. Roughly
         /// <c>value/4</c> elements span a 90° fillet, so ~30 gives ~7-8 nodes per corner.
+        /// AI-assisted
         /// </summary>
         public int MeshSizeFromCurvature { get; set; } = 80;
 
@@ -239,6 +242,7 @@ namespace GeometryLib
         /// a conductor whose boundary has been split into several sub-lines after clipping):
         /// gmsh treats <c>Physical Curve (T) = {...};</c> by ID, so emitting the tag twice
         /// would overwrite the previous one and silently drop entities.
+        /// AI-assisted
         /// </summary>
         private void AddOrExtendPhysicalCurve(int tag, GmshCurvilinearEntity seg)
         {
@@ -411,6 +415,7 @@ namespace GeometryLib
             }
         }
 
+        // Portions of this were re-written by AI
         public void WriteFile(string filename = null)
         {
             if (filename == null) throw new Exception("No filename specified for Gmsh file output.");
@@ -723,6 +728,7 @@ namespace GeometryLib
             return true;
         }
 
+        // Portions of this were modified by AI
         private List<int> DetermineLineSegmentOrientations()
         {
             int n = segments.Count;
@@ -1042,6 +1048,7 @@ namespace GeometryLib
     // configured property. Combine them with `GmshMinField`, then assign the
     // combiner's ID to `GmshFile.BackgroundFieldId`.
     // See https://gmsh.info/doc/texinfo/gmsh.html#Specifying-mesh-element-sizes
+    // Mesh size field work was implemented by AI
     // -------------------------------------------------------------------------
     public abstract class GmshField
     {
@@ -1069,6 +1076,7 @@ namespace GeometryLib
     /// Distance field: at each point in the mesh, evaluates to the distance to
     /// the nearest sampled point on the listed entities. Drive it through a
     /// <see cref="GmshThresholdField"/> to convert distance into an element size.
+    /// AI-assisted
     /// </summary>
     public class GmshDistanceField : GmshField
     {
@@ -1093,6 +1101,7 @@ namespace GeometryLib
     /// Threshold field: maps an input field (typically a Distance field) into a
     /// mesh size that ramps from <see cref="SizeMin"/> (at distance &lt;= DistMin)
     /// to <see cref="SizeMax"/> (at distance &gt;= DistMax).
+    /// AI-Assisted
     /// </summary>
     public class GmshThresholdField : GmshField
     {
@@ -1123,6 +1132,7 @@ namespace GeometryLib
     /// Min field: pointwise minimum of its input fields. Use this to combine
     /// several refinement requests (each contributed by a Distance+Threshold
     /// pair) into a single background field.
+    /// AI-assisted
     /// </summary>
     public class GmshMinField : GmshField
     {
@@ -1138,6 +1148,7 @@ namespace GeometryLib
     /// <summary>
     /// Constant field: returns <see cref="VIn"/> inside the listed surfaces and
     /// <see cref="VOut"/> elsewhere. Handy for "refine this region uniformly".
+    /// AI-assisted
     /// </summary>
     public class GmshConstantField : GmshField
     {
