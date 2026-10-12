@@ -1,17 +1,19 @@
 // Copyright 2023, T. C. Raymond
 // SPDX-License-Identifier: MIT
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using System.IO;
+using System.Linq;
 using MathNet.Numerics;
-using MeshLib;
 
 namespace GeometryLib
 {
     public class GmshFile
     {
-        public int ElementOrder {get; set;} = 1;
-        
+        public int ElementOrder { get; set; } = 1;
+
         public List<GmshPoint> points = new List<GmshPoint>();
         public List<GmshLine> lines = new List<GmshLine>();
         public List<GmshArc> arcs = new List<GmshArc>();
@@ -171,7 +173,7 @@ namespace GeometryLib
             }
 
             return pt;
-            
+
         }
 
         public GmshLine CreateNewLine(GmshPoint pt1, GmshPoint pt2, int ID = -9999)
@@ -216,7 +218,7 @@ namespace GeometryLib
             return arc;
         }
 
-        public GmshCurveLoop CreateNewCurveLoop(List<GmshCurvilinearEntity> segments, int ID=-9999)
+        public GmshCurveLoop CreateNewCurveLoop(List<GmshCurvilinearEntity> segments, int ID = -9999)
         {
             var loop = new GmshCurveLoop(segments);
             if (ID == -9999)
@@ -258,7 +260,7 @@ namespace GeometryLib
             }
         }
 
-        public GmshPlaneSurface CreateNewSurface(GmshCurveLoop boundary, List<GmshCurveLoop> holes, int ID=-9999)
+        public GmshPlaneSurface CreateNewSurface(GmshCurveLoop boundary, List<GmshCurveLoop> holes, int ID = -9999)
         {
             var surface = new GmshPlaneSurface(boundary, holes);
             if (ID == -9999)
@@ -319,12 +321,12 @@ namespace GeometryLib
             fields.Clear();
             BackgroundFieldId = null;
 
-            foreach(var point in geometry.Points)
+            foreach (var point in geometry.Points)
             {
                 CreateNewPoint(point.x, point.y, 0, -9999, point.lc);
             }
 
-            foreach(var line in geometry.Lines)
+            foreach (var line in geometry.Lines)
             {
                 var pt1 = FindPoint(line.pt1);
                 var pt2 = FindPoint(line.pt2);
@@ -597,7 +599,7 @@ namespace GeometryLib
         public int ID;
         public double lc = 0.4;
 
-        public GmshPoint(double in_x, double in_y, double in_z, int in_ID=-9999, double in_lc=0.4)
+        public GmshPoint(double in_x, double in_y, double in_z, int in_ID = -9999, double in_lc = 0.4)
         {
             x = in_x;
             y = in_y;
@@ -606,7 +608,8 @@ namespace GeometryLib
             lc = in_lc;
         }
 
-        public void Write(StreamWriter sw){
+        public void Write(StreamWriter sw)
+        {
             sw.WriteLine("Point ({0}) = {{{1}, {2}, {3}, {4}}};", ID, x, y, z, lc);
         }
 
@@ -624,7 +627,7 @@ namespace GeometryLib
 
     }
 
-    public abstract class GmshCurvilinearEntity 
+    public abstract class GmshCurvilinearEntity
     {
         public GmshPoint StartPt, EndPt;
         public int ID;
@@ -632,13 +635,15 @@ namespace GeometryLib
 
     public class GmshLine : GmshCurvilinearEntity
     {
-        public GmshLine(GmshPoint in_pt1, GmshPoint in_pt2){
+        public GmshLine(GmshPoint in_pt1, GmshPoint in_pt2)
+        {
             StartPt = in_pt1;
             EndPt = in_pt2;
             ID = -9999;
         }
 
-        public void Write(StreamWriter sw){
+        public void Write(StreamWriter sw)
+        {
             sw.WriteLine("Line ({0}) = {{{1}, {2}}};", ID, StartPt.ID, EndPt.ID);
         }
 
@@ -667,20 +672,26 @@ namespace GeometryLib
         public List<GmshCurvilinearEntity> segments;
         public int ID;
 
-        public GmshCurveLoop(List<GmshCurvilinearEntity> in_segs){
+        public GmshCurveLoop(List<GmshCurvilinearEntity> in_segs)
+        {
 
             segments = in_segs;
         }
 
-        public void Write(StreamWriter sw){
+        public void Write(StreamWriter sw)
+        {
             var orientations = DetermineLineSegmentOrientations();
             sw.Write("Curve Loop ({0}) = {{", ID);
             bool firstSeg = true;
             int i = 0;
-            foreach (var seg in segments) {
-                if(!firstSeg){
+            foreach (var seg in segments)
+            {
+                if (!firstSeg)
+                {
                     sw.Write(", ");
-                }else{
+                }
+                else
+                {
                     firstSeg = false;
                 }
                 sw.Write("{0}", seg.ID * orientations[i]);
@@ -759,7 +770,7 @@ namespace GeometryLib
             //    else
             //    {
             //        Msg::Debug("Unknown curve %d, aborting curve loop sort: "
-              
+
             //                   "let's hope you know what you're doing ;-)",
             //                   j);
             //        return true;
@@ -814,7 +825,7 @@ namespace GeometryLib
             //        break;
             //    }
             //}
-            
+
 
             //orientations.Add(1); //First segment will be arbitrarily 1
             int currDirection = 1;
@@ -823,7 +834,7 @@ namespace GeometryLib
             // First segment, determine direction
             if (currSegment.StartPt.Equals(nextSegment.StartPt) || currSegment.StartPt.Equals(nextSegment.EndPt))
             {
-                currDirection = -1;  
+                currDirection = -1;
             }
             else if (currSegment.EndPt.Equals(nextSegment.StartPt) || currSegment.EndPt.Equals(nextSegment.EndPt))
             {
@@ -870,7 +881,7 @@ namespace GeometryLib
                         throw new Exception("Line Loop segments do not appear to be continuous.");
                     }
                 }
-                currDirection = orientations[i+1];
+                currDirection = orientations[i + 1];
             }
             //orientations.Add(1);
 
@@ -931,8 +942,8 @@ namespace GeometryLib
                 for (int i = 0; i < n - 1; i++)
                 {
                     var currSegment = segments[i];
-                    var nextSegment = segments[i+1];
-                    
+                    var nextSegment = segments[i + 1];
+
                     if (currDirection > 0) //Proceed in current direction
                     {
                         if (currSegment.EndPt.Equals(nextSegment.StartPt))

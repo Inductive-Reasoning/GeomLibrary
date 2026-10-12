@@ -1,4 +1,7 @@
-﻿using GeometryLib;
+﻿using System;
+using System.IO;
+using System.Linq;
+using GeometryLib;
 
 // This was written with AI-assistance
 public class Netgen2DFileWriter : GeometryWriter

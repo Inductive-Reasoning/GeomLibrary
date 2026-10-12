@@ -1,8 +1,12 @@
 // Copyright 2023, T. C. Raymond
 // SPDX-License-Identifier: MIT
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Threading;
 using MathNet.Numerics;
 using MeshLib;
 
@@ -216,7 +220,7 @@ namespace GeometryLib
 
         private string? FindTerminal()
         {
-            string[] terminals = { "cosmic-term","gnome-terminal", "xterm", "konsole" };
+            string[] terminals = { "cosmic-term", "gnome-terminal", "xterm", "konsole" };
             var pathEnv = Environment.GetEnvironmentVariable("PATH");
             if (pathEnv != null)
             {

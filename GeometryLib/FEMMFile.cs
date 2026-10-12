@@ -1,10 +1,10 @@
 ﻿// Copyright 2023, T. C. Raymond
 // SPDX-License-Identifier: MIT
 
-using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Emit;
@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CliWrap;
+using MathNet.Numerics.Distributions;
 using netDxf.Entities;
 
 namespace GeometryLib
@@ -40,12 +41,12 @@ namespace GeometryLib
     // 7 = Antiperiodic AGE
     public enum FEMMBdryType
     {
-        prescribedA=0,
-        smallSkinDepth=1,
-        mixed=2,
-        strategicDualImage=3,
-        periodic=4,
-        antiPeriodic=5
+        prescribedA = 0,
+        smallSkinDepth = 1,
+        mixed = 2,
+        strategicDualImage = 3,
+        periodic = 4,
+        antiPeriodic = 5
     }
 
     public static class EnumerationExtensions
@@ -94,7 +95,7 @@ namespace GeometryLib
                                .ToArray();
 
             var maxCircID = circMap.Max(s => s.Value);
-            CircuitProps = Enumerable.Range(0, maxCircID+1)
+            CircuitProps = Enumerable.Range(0, maxCircID + 1)
                                .Select(_ => new FEMMCircuitProp())
                                .ToArray();
 
@@ -174,7 +175,7 @@ namespace GeometryLib
             }
             if (circMap.ContainsKey(surface.Tag))
             {
-                circID = circMap[surface.Tag]+1;
+                circID = circMap[surface.Tag] + 1;
             }
             if (blockID < 0)
             {
@@ -185,7 +186,7 @@ namespace GeometryLib
             {
                 var newCircuit = new FEMMCircuitProp();
                 newCircuit.CircuitName = $"Circuit {circID}";
-                CircuitProps[circID-1] = newCircuit;
+                CircuitProps[circID - 1] = newCircuit;
             }
             // Have to add one to blockID because FEMM subtracts one off (presumably expects 1-based index)
             var newBlockLabel = new FEMMBlockLabel(pt.x, pt.y, blockID + 1, -1, circID, 0, 0, 1, false);
@@ -434,9 +435,9 @@ namespace GeometryLib
         public double MeshSize { get; set; }
         public int BdryProp { get; set; } = -1;
         public int HideInPost { get; set; }
-        public int GroupNum  { get; set; }
+        public int GroupNum { get; set; }
 
-        public FEMMSegment(int startPt, int endPt, double meshSize=-1, int bdryProp=-1, int hideInPost=0, int groupNum=1)
+        public FEMMSegment(int startPt, int endPt, double meshSize = -1, int bdryProp = -1, int hideInPost = 0, int groupNum = 1)
         {
             StartPt = startPt;
             EndPt = endPt;
@@ -457,12 +458,12 @@ namespace GeometryLib
         int StartPt { get; set; }
         int EndPt { get; set; }
         double ArcAngle { get; set; }
-        double MaxSegment {  get; set; }
+        double MaxSegment { get; set; }
         int BdryProp { get; set; }
         int HideInPost { get; set; }
         int GroupNum { get; set; }
 
-        public FEMMArcSegment(int startPt, int endPt, double arcAngle, double maxSegment=10, int bdryProp=0, int hideInPost=0, int groupNum=1)
+        public FEMMArcSegment(int startPt, int endPt, double arcAngle, double maxSegment = 10, int bdryProp = 0, int hideInPost = 0, int groupNum = 1)
         {
             StartPt = startPt;
             EndPt = endPt;
