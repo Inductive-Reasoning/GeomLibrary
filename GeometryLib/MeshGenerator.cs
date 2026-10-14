@@ -258,6 +258,7 @@ namespace GeometryLib
             ReportOutput($"Using gmsh at: {gmshPath}");
 
             gmshFile.MeshSizeFromCurvature = MeshSizeFromCurvature;
+            gmshFile.ElementOrder = meshorder;
             gmshFile.WriteFile(filename);
 
             // -setnumber Mesh.RemoveDuplicateNodes/Elements 1 collapses coincident nodes/elements
@@ -269,7 +270,7 @@ namespace GeometryLib
             // -setnumber Mesh.RenumberNodes/Elements 1 produces contiguous IDs after the removals so
             // the resulting msh2 file is self-consistent.
             string gmshArgs =
-                $"{filename} -2 -order {meshorder} -clscale {meshscale} -format msh2 -v 3 " +
+                $"{filename} -2 -clscale {meshscale} -format msh2 -v 3 " +
                 "-setnumber Mesh.RemoveDuplicateNodes 1 " +
                 "-setnumber Mesh.RemoveDuplicateElements 1 " +
                 "-setnumber Mesh.RenumberNodes 1 " +

@@ -52,11 +52,11 @@ namespace MeshLib
             // IMPORTANT: Gmsh node IDs start at 1, but we want to start at 0
             foreach (var node in gmshFile.Nodes)
             {
-                var newNode = new MeshNode(node.Id-1, node.X, node.Y, node.Z);
-                var newVert = new MeshVertex(node.Id-1, newNode);
+                var newNode = new MeshNode(node.Id - 1, node.X, node.Y, node.Z);
+                var newVert = new MeshVertex(node.Id - 1, newNode);
 
-                Nodes[(int)node.Id-1] = newNode;
-                Vertices[(int)node.Id-1] = newVert;
+                Nodes[(int)node.Id - 1] = newNode;
+                Vertices[(int)node.Id - 1] = newVert;
             }
 
             // We'll store line (type=1) or point (type=15) elements for later
@@ -68,10 +68,12 @@ namespace MeshLib
                 switch (elem.Type)
                 {
                     case 2: // 3-node triangle
+                    case 9: // 6-node triangle
                         MakeTriangle(elem);
                         break;
 
                     case 1: // 2-node line
+                    case 8: // 3-node line
                     case 15: // 1-node point
                         postProcessElements.Add(elem);
                         break;
@@ -90,7 +92,7 @@ namespace MeshLib
             {
                 if (elem.Tags.Count == 0) continue;
 
-                if (elem.Type == 1 && elem.Nodes.Count == 2) // line => set Attrib on half-edge
+                if ((elem.Type == 1 || elem.Type == 8) && elem.Nodes.Count >= 2) // line => set Attrib on half-edge
                 {
                     // elem.Nodes are 1-indexed
                     int v1 = elem.Nodes[0] - 1;
@@ -121,7 +123,7 @@ namespace MeshLib
         /// </summary>
         private void MakeTriangle(GmshElement elem)
         {
-            if (elem.Nodes.Count != 3)
+            if (elem.Nodes.Count < 3)
                 throw new Exception("Triangle must have exactly 3 node IDs.");
 
             // Create one Face
@@ -317,8 +319,9 @@ namespace MeshLib
             }
         }
 
-        public void ReadFromTriangleFiles(string path) {
-            throw new NotImplementedException(); 
+        public void ReadFromTriangleFiles(string path)
+        {
+            throw new NotImplementedException();
         }
 
     }
