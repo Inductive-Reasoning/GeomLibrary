@@ -710,6 +710,7 @@ namespace GeometryLib
 
         public bool IsMatchingLoop(GeomLineLoop in_loop)
         {
+            if (in_loop is null) return false;
             foreach (var in_seg in in_loop.Boundary)
             {
                 bool foundMatchingSegment = false;
